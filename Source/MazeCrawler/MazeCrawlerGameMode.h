@@ -1,6 +1,7 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #pragma once
+#include "Blueprint/UserWidget.h"
 #include "GameFramework/GameModeBase.h"
 #include "MazeCrawlerGameMode.generated.h"
 
@@ -15,4 +16,16 @@ class AMazeCrawlerGameMode : public AGameModeBase
 	GENERATED_BODY()
 public:
 	AMazeCrawlerGameMode();
+
+	UFUNCTION(BlueprintCallable, Category = "Maze Crawler")
+	void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
+
+protected:
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maze Crawler")
+	TSubclassOf<UUserWidget> StartingWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* CurrentWidget;
 };
