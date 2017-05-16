@@ -9,4 +9,9 @@ void AMazeCrawlerPlayerController::BeginPlay()
 	SetInputMode(FInputModeGameAndUI());
 }
 
+void AMazeCrawlerPlayerController::SetupInputComponent()
+{
+	InputComponent->BindAxis(TEXT("RightOrLeft"));
+	InputComponent->BindAxis(TEXT("UpOrDown"));
+}
 

@@ -16,5 +16,7 @@ class MAZECRAWLER_API AMazeCrawlerPlayerController : public APlayerController
 public:
 	virtual void BeginPlay() override;
 	
-	
+	virtual void SetupInputComponent() override;
 };
+
+
