@@ -5,16 +5,8 @@
 #include "PaperCharacter.h"
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
+#include "MazeMoveDirection.h"
 #include "MazeCharacter.generated.h"
-
-UENUM(BlueprintType)		
-enum class EMazeMoveDirection : uint8
-{
-	UP 		UMETA(DisplayName = "Up"),
-	DOWN 	UMETA(DisplayName = "Down"),
-	RIGHT	UMETA(DisplayName = "Right"),
-	LEFT	UMETA(DisplayName = "Left")
-};
 
 /**
  * 
