@@ -3,7 +3,7 @@
 #pragma once
 
 #include "UObject/NoExportTypes.h"
-#include "MazeMoveDirection.h"
+#include "MyStaticLibrary.h"
 #include "MazeCell.generated.h"
 
 /**

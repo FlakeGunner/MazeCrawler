@@ -5,7 +5,7 @@
 #include "PaperCharacter.h"
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
-#include "MazeMoveDirection.h"
+#include "MyStaticLibrary.h"
 #include "MazeCharacter.generated.h"
 
 /**
