@@ -4,9 +4,14 @@
 
 #include "GameFramework/Actor.h"
 #include "PaperTileMapComponent.h"
+#include "PaperSpriteComponent.h"
+#include "PaperSprite.h"
+#include "PaperSpriteActor.h"
 #include "PaperTileSet.h"
 #include "MazeCell.h"
 #include "MazeGrid.h"
+#include "StartMarker.h"
+#include "MyStaticLibrary.h"
 #include <unordered_map>
 #include "MazeGenerator.generated.h"
 
@@ -21,6 +26,7 @@ public:
 	void GenerateMaze();
 	void CarvePassagesFrom(int32 currentX, int32 currentY);
 	void RenderMaze();
+	void AddStartAndEnd();
 
 protected:
 	// Called when the game starts or when spawned
@@ -33,7 +39,9 @@ private:
 	void PopulateGrid();
 
 	UPaperTileMapComponent* m_TileMapComp;
+	AStartMarker* m_StartActor;
 	UPaperTileSet* m_TileSet;
+	TSubclassOf<class AStartMarker> m_StartMarkerBlueprint;
 	FMazeGrid m_Grid;
 	int32 m_GridSize;
 	int32 m_CellSize;

@@ -2,7 +2,9 @@
 
 #pragma once
 #include "Blueprint/UserWidget.h"
+#include "MazeCharacter.h"
 #include "GameFramework/GameModeBase.h"
+#include "MyStaticLibrary.h"
 #include "MazeCrawlerGameMode.generated.h"
 
 // The GameMode defines the game being played. It governs the game rules, scoring, what actors
@@ -20,6 +22,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maze Crawler")
 	void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
 
+	void SpawnCharacter(FVector location);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -28,4 +32,9 @@ protected:
 
 	UPROPERTY()
 	UUserWidget* CurrentWidget;
+
+private:
+	AMazeCharacter* m_MazeCharacter;
+
+	TSubclassOf<class AMazeCharacter> m_MazeCharacterBlueprint;
 };

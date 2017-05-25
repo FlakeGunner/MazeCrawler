@@ -22,6 +22,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	
-	
+	UFUNCTION(BlueprintCallable, Category = "MazeCrawler")
+		void SpawnCharacter();
+
+	UFUNCTION(BlueprintCallable, Category = "MazeCrawler")
+		void StartTimer();
+
 };

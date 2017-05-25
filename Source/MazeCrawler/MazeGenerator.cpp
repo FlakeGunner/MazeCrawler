@@ -15,6 +15,11 @@ AMazeGenerator::AMazeGenerator()
 	static ConstructorHelpers::FObjectFinder<UPaperTileSet> locateTileSet(TEXT("PaperTileSet'/Game/Maps/Level_Two/basic_block_TileSet.basic_block_TileSet'"));
 	m_TileSet = locateTileSet.Object;
 
+	static ConstructorHelpers::FObjectFinder<UBlueprint> locateStartMarkerBlueprint(TEXT("Blueprint'/Game/Blueprints/StartMarker_BP.StartMarker_BP'"));
+	if (locateStartMarkerBlueprint.Object) {
+		m_StartMarkerBlueprint = (UClass*)locateStartMarkerBlueprint.Object->GeneratedClass;
+	}
+	
 	m_GridSize = 8;
 
 	m_CellSize = 6;
@@ -140,6 +145,21 @@ void AMazeGenerator::RenderMaze()
 	}
 }
 
+void AMazeGenerator::AddStartAndEnd()
+{
+	UWorld* const World = GetWorld();
+	if (World) {
+
+	FVector startLocation = m_TileMapComp->GetTileCornerPosition(1, 1, 1, true);
+
+	startLocation.Y = 1.0f;
+
+	m_StartActor = UMyStaticLibrary::SpawnBP<AStartMarker>(GetWorld(), m_StartMarkerBlueprint, startLocation, FRotator(0.0f, 0.0f, 0.0f));
+
+	}
+
+}
+
 // Called when the game starts or when spawned
 void AMazeGenerator::BeginPlay()
 {
@@ -148,6 +168,8 @@ void AMazeGenerator::BeginPlay()
 	GenerateMaze();
 
 	RenderMaze();
+
+	AddStartAndEnd();
 	
 }
 

@@ -26,3 +26,11 @@ void AStart::Tick(float DeltaTime)
 
 }
 
+void AStart::SpawnCharacter()
+{
+}
+
+void AStart::StartTimer()
+{
+}
+
