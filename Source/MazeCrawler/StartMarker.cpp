@@ -20,11 +20,15 @@ void AStartMarker::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FVector location(96.0f, 29.0f, -96.0f);
+	FVector actorLocation = GetActorLocation();
+
+	actorLocation.X += 64.0f;
+	actorLocation.Y += 28.0f;
+	actorLocation.Z += -64.0f;
 
 	AMazeCrawlerGameMode* gameMode = (AMazeCrawlerGameMode*)GetWorld()->GetAuthGameMode();
 
-	gameMode->SpawnCharacter(location);
+	gameMode->SpawnCharacter(actorLocation);
 
 }
 

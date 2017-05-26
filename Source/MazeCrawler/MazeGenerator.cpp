@@ -1,8 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MazeCrawler.h"
-#include <stdexcept> 
-#include <unordered_map>
 #include "MazeGenerator.h"
 
 
@@ -18,6 +16,11 @@ AMazeGenerator::AMazeGenerator()
 	static ConstructorHelpers::FObjectFinder<UBlueprint> locateStartMarkerBlueprint(TEXT("Blueprint'/Game/Blueprints/StartMarker_BP.StartMarker_BP'"));
 	if (locateStartMarkerBlueprint.Object) {
 		m_StartMarkerBlueprint = (UClass*)locateStartMarkerBlueprint.Object->GeneratedClass;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UBlueprint> locateEndMarkerBlueprint(TEXT("Blueprint'/Game/Blueprints/EndMarker_BP.EndMarker_BP'"));
+	if (locateEndMarkerBlueprint.Object) {
+		m_EndMarkerBlueprint = (UClass*)locateEndMarkerBlueprint.Object->GeneratedClass;
 	}
 	
 	m_GridSize = 8;
@@ -66,7 +69,10 @@ void AMazeGenerator::CarvePassagesFrom(int32 currentX, int32 currentY)
 	directions.Add(EMazeMoveDirection::LEFT);
 	directions.Add(EMazeMoveDirection::RIGHT);
 
-	directions = Shuffle(directions);
+	directions = UMyStaticLibrary::Shuffle<EMazeMoveDirection>(directions);
+
+
+	bool isDeadEnd = true;
 
 	for (auto& direction : directions)
 	{
@@ -78,11 +84,18 @@ void AMazeGenerator::CarvePassagesFrom(int32 currentX, int32 currentY)
 			m_Grid.Rows[currentX].Columns[currentY]->AddDirection(direction);
 			m_Grid.Rows[newX].Columns[newY]->AddDirection(m_Opposite[direction]);
 
+			isDeadEnd = false;
+
 			CarvePassagesFrom(newX, newY);
 		}
-		
-		
+
 	}
+
+	if (isDeadEnd)
+	{
+		deadEnds.Add(m_Grid.Rows[currentX].Columns[currentY]);
+	}
+
 }
 
 void AMazeGenerator::RenderMaze()
@@ -150,14 +163,36 @@ void AMazeGenerator::AddStartAndEnd()
 	UWorld* const World = GetWorld();
 	if (World) {
 
-	FVector startLocation = m_TileMapComp->GetTileCornerPosition(1, 1, 1, true);
+		FVector startLocation = m_TileMapComp->GetTileCornerPosition(1, 1, 1, true);
 
-	startLocation.Y = 1.0f;
+		startLocation.Y = 1.0f;
 
-	m_StartActor = UMyStaticLibrary::SpawnBP<AStartMarker>(GetWorld(), m_StartMarkerBlueprint, startLocation, FRotator(0.0f, 0.0f, 0.0f));
+		m_StartMarker = UMyStaticLibrary::SpawnBP<AStartMarker>(GetWorld(), m_StartMarkerBlueprint, startLocation, FRotator(0.0f, 0.0f, 0.0f));
 
+		deadEnds = UMyStaticLibrary::Shuffle<UMazeCell*>(deadEnds);
+
+		int32 cellOriginX = m_GridSize - 1;
+		int32 cellOriginY = m_GridSize - 1;
+		for (auto& deadEnd : deadEnds)
+		{
+			if (deadEnd->X() < (m_GridSize / 2) || deadEnd->Y() < (m_GridSize / 2)) {
+				continue;
+			}
+
+			cellOriginX = (deadEnd->X() * m_CellSize) - deadEnd->X() + 1;
+			cellOriginY = (deadEnd->Y() * m_CellSize) - deadEnd->Y() + 1;
+			break;
+		}
+
+		
+		
+		FVector endLocation = m_TileMapComp->GetTileCornerPosition(cellOriginX, cellOriginY, 1, true);
+
+		endLocation.Y = 1.0f;
+
+		m_EndMarker = UMyStaticLibrary::SpawnBP<AEndMarker>(GetWorld(), m_EndMarkerBlueprint, endLocation, FRotator(0.0f, 0.0f, 0.0f));
+		
 	}
-
 }
 
 // Called when the game starts or when spawned
@@ -173,20 +208,7 @@ void AMazeGenerator::BeginPlay()
 	
 }
 
-TArray<EMazeMoveDirection> AMazeGenerator::Shuffle(TArray<EMazeMoveDirection> directions)
-{
-	FRandomStream SRand = FRandomStream();
-	SRand.GenerateNewSeed();
 
-	for (int32 i = directions.Num() - 1; i > 0; i--) {
-		int32 j = FMath::FloorToInt(SRand.FRand() * (i + 1)) % directions.Num();
-		EMazeMoveDirection temp = directions[i];
-		directions[i] = directions[j];
-		directions[j] = temp;
-	}
-
-	return directions;
-}
 
 void AMazeGenerator::PopulateGrid()
 {

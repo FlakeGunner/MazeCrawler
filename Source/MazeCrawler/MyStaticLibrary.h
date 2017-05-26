@@ -31,6 +31,21 @@ public:
 
 		return TheWorld->SpawnActor<BPObjectType>(TheBP, Loc, Rot, SpawnInfo);
 	}
+
+	template<typename ShuffleObjectType> static FORCEINLINE TArray<ShuffleObjectType> Shuffle(TArray<ShuffleObjectType> arrayToShuffle)
+	{
+		FRandomStream SRand = FRandomStream();
+		SRand.GenerateNewSeed();
+
+		for (int32 i = arrayToShuffle.Num() - 1; i > 0; i--) {
+			int32 j = FMath::FloorToInt(SRand.FRand() * (i + 1)) % arrayToShuffle.Num();
+			ShuffleObjectType temp = arrayToShuffle[i];
+			arrayToShuffle[i] = arrayToShuffle[j];
+			arrayToShuffle[j] = temp;
+		}
+
+		return arrayToShuffle;
+	}
 	
 	
 };
